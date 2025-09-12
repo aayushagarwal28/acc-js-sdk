@@ -1178,11 +1178,15 @@ class Client {
      * parameters should be set
      */
     _prepareSoapCall(urn, method, isStatic, internal, extraHttpHeaders, pushDownOptions) {
+        const requestId = Util.getUUID();
+        const extraHttpHeadersWithRequestId = Object.assign({}, extraHttpHeaders, {
+            'x-request-id': requestId
+        });
         const soapCall = new SoapMethodCall(this._transport, urn, method,
                                             this._sessionToken, this._securityToken,
                                             this._getUserAgentString(),
                                             Object.assign({}, this._connectionParameters._options, pushDownOptions),
-                                            extraHttpHeaders,
+                                            extraHttpHeadersWithRequestId,
                                             this._bearerToken);
         soapCall.internal = !!internal;
         soapCall.isStatic = isStatic;
