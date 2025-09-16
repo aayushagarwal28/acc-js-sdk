@@ -1185,8 +1185,7 @@ class Client {
         } catch (error) {
           console.error("Failed to generate request ID", error);
         }
-        const updatedExtraHttpHeaders = requestId
-          ? Object.assign({}, extraHttpHeaders, {
+        const updatedExtraHttpHeaders = requestId ? Object.assign({}, extraHttpHeaders, {
               "x-request-id": requestId,
             })
           : extraHttpHeaders;
