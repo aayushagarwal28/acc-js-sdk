@@ -1178,11 +1178,23 @@ class Client {
      * parameters should be set
      */
     _prepareSoapCall(urn, method, isStatic, internal, extraHttpHeaders, pushDownOptions) {
+        // Generate unique request ID for every SOAP call
+        let requestId;
+        try {
+          requestId = Util.getUUID();
+        } catch (error) {
+          console.error("Failed to generate request ID", error);
+        }
+        const updatedExtraHttpHeaders = requestId
+          ? Object.assign({}, extraHttpHeaders, {
+              "x-request-id": requestId,
+            })
+          : extraHttpHeaders;
         const soapCall = new SoapMethodCall(this._transport, urn, method,
                                             this._sessionToken, this._securityToken,
                                             this._getUserAgentString(),
                                             Object.assign({}, this._connectionParameters._options, pushDownOptions),
-                                            extraHttpHeaders,
+                                            updatedExtraHttpHeaders,
                                             this._bearerToken);
         soapCall.internal = !!internal;
         soapCall.isStatic = isStatic;
