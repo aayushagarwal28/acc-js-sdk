@@ -309,6 +309,7 @@ class Credentials {
     * @property {number} timeout - Can be set to change the HTTP call timeout. Value is passed in ms.
     * @property {string} cacheRootKey - "default" or "none" - determine the prefix to use for the keys in the caches of schemas, options, etc.
     * @property {string} instanceKey - an optional value to override the instance key which is used for the caches of schemas, options, etc.
+    * @property {boolean} enableRequestIdHeader - an optional value to enable the request ID header for SOAP API calls
     * @memberOf Campaign
  */
 
@@ -1185,10 +1186,12 @@ class Client {
         } catch (error) {
           console.error("Failed to generate request ID", error);
         }
-        const updatedExtraHttpHeaders = requestId ? Object.assign({}, extraHttpHeaders, {
-              "x-request-id": requestId,
-            })
-          : extraHttpHeaders;
+        const enableRequestIdHeader = this._connectionParameters._options?.enableRequestIdHeader;
+        const updatedExtraHttpHeaders = (enableRequestIdHeader && requestId) 
+        ? Object.assign({}, extraHttpHeaders, {
+            "x-request-id": requestId,
+          })
+        : extraHttpHeaders;
         const soapCall = new SoapMethodCall(this._transport, urn, method,
                                             this._sessionToken, this._securityToken,
                                             this._getUserAgentString(),
